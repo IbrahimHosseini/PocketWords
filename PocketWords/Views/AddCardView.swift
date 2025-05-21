@@ -14,10 +14,10 @@ struct AddCardView: View {
     @State private var word = ""
     @State private var meaning = ""
     
-    @StateObject private var viewModel: AddCardViewModel
+    @State private var viewModel: AddCardViewModel
         
     init(context: ModelContext) {
-        _viewModel = StateObject(wrappedValue: AddCardViewModel(context: context))
+        _viewModel = State(wrappedValue: AddCardViewModel(context: context))
     }
     
     var body: some View {

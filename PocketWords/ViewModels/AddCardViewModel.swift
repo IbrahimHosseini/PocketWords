@@ -8,12 +8,12 @@
 import Foundation
 import SwiftData
 
-@MainActor
-class AddCardViewModel: ObservableObject {
-    @Published var word: String = ""
-    @Published var meaning: String = ""
-    @Published var isLoading: Bool = false
-    @Published var error: Error? = nil
+@Observable
+class AddCardViewModel {
+    var word: String = ""
+    var meaning: String = ""
+    var isLoading: Bool = false
+    var error: Error? = nil
     
     private let database: SwiftDataManager<WordCard>
     
