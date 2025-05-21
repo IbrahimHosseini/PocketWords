@@ -7,30 +7,68 @@
 
 import XCTest
 @testable import PocketWords
+import SwiftData
 
 final class PocketWordsTests: XCTestCase {
-
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+    
+    var modelContainer: ModelContainer!
+    var context: ModelContext!
+    
+    @MainActor
+    override func setUp() {
+        super.setUp()
+        modelContainer = try! ModelContainer(
+            for: WordCard.self,
+            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
+        )
+        context = modelContainer.mainContext
     }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+    
+    @MainActor
+    override func tearDown() {
+        modelContainer = nil
+        context = nil
+        super.tearDown()
     }
-
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
+    
+    func makeTestCard(word: String = "Apple", meaning: String = "سیب", mastered: Bool = false) -> WordCard {
+        let card = WordCard(word: word, meaning: meaning, mastered: mastered)
+        context.insert(card)
+        return card
     }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
+    
+    @MainActor
+    func testCheckAnswer_CorrectAnswer_MarksMastered() throws {
+        let card = makeTestCard()
+        let viewModel = FlashcardViewModel(context: context)
+        
+        let isCorrect = viewModel.checkAnswer(userAnswer: "  سیب ", card: card)
+        
+        XCTAssertTrue(isCorrect)
+        XCTAssertTrue(card.mastered)
     }
-
+    
+    @MainActor
+    func testCheckAnswer_IncorrectAnswer_DoesNotMarkMastered() throws {
+        let card = makeTestCard()
+        let viewModel = FlashcardViewModel(context: context)
+        
+        let isCorrect = viewModel.checkAnswer(userAnswer: "پرتقال", card: card)
+        
+        XCTAssertFalse(isCorrect)
+        XCTAssertFalse(card.mastered)
+    }
+    
+    @MainActor
+    func testCheckAnswer_TrimAndCaseInsensitive() throws {
+        let card = makeTestCard(meaning: "سیب")
+        let viewModel = FlashcardViewModel(context: context)
+        
+        let isCorrect = viewModel.checkAnswer(userAnswer: "  سیب  ", card: card)
+        XCTAssertTrue(isCorrect)
+        
+        let isCorrectCase = viewModel.checkAnswer(userAnswer: "سیب", card: card)
+        XCTAssertTrue(isCorrectCase)
+    }
+    
 }
