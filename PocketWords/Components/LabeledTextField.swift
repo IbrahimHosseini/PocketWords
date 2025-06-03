@@ -26,3 +26,26 @@ struct LabeledTextField: View {
         }
     }
 }
+
+#Preview {
+    VStack(spacing: Spacing.large) {
+        LabeledTextField(
+            label: "Word",
+            placeholder: "Enter new word",
+            text: .constant("Example")
+        )
+        
+        LabeledTextField(
+            label: "Meaning",
+            placeholder: "Enter word meaning",
+            text: .constant("")
+        )
+        
+        LabeledTextField(
+            label: "Definition",
+            placeholder: "Type here...",
+            text: .constant("Sample text content")
+        )
+    }
+    .padding(Spacing.large)
+}
