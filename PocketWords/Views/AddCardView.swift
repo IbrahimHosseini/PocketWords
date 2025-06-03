@@ -11,9 +11,7 @@ import SwiftData
 struct AddCardView: View {
     @Environment(\.dismiss) var dismiss
     
-    @State private var word = ""
-    @State private var meaning = ""
-    
+    @State private var showErrorAlert = false
     @State private var viewModel: AddCardViewModel
         
     init(context: ModelContext) {
@@ -40,25 +38,27 @@ struct AddCardView: View {
             LabeledTextField(
                 label: "Word",
                 placeholder: "Enter new word",
-                text: $word
+                text: $viewModel.word
             )
             
             // Meaning Field
             LabeledTextField(
                 label: "Meaning",
                 placeholder: "Enter word meaning",
-                text: $meaning
+                text: $viewModel.meaning
             )
             
             // Save Button
             ActionButton(
                 title: "Save Card",
-                isEnabled: !word.isEmpty && !meaning.isEmpty,
+                isEnabled: !viewModel.word.isEmpty && !viewModel.meaning.isEmpty,
                 isLoading: viewModel.isLoading,
                 action: {
-                    let card = WordCard(word: word, meaning: meaning)
-                    viewModel.addCard(card)
-                    dismiss()
+                    if viewModel.saveCard() {
+                        dismiss()
+                    } else {
+                        showErrorAlert = true
+                    }
                 }
             )
             
@@ -69,5 +69,13 @@ struct AddCardView: View {
             Color.white
                 .clipShape(RoundedRectangle(cornerRadius: Radius.large, style: .continuous))
         )
+        .alert("Error", isPresented: $showErrorAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(viewModel.errorMessage ?? "An unknown error occurred.")
+        }
+        .onDisappear {
+            viewModel.clearFields()
+        }
     }
 }
