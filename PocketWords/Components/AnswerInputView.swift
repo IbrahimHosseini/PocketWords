@@ -27,7 +27,7 @@ struct AnswerInputView: View {
                 .submitLabel(.send) // Changes the return key title to "Done"
             
             ActionButton(
-                title: "Check",
+                title: buttonTitle,
                 isSmallButton: true,
                 isEnabled: !userAnswer.isEmpty,
                 isLoading: false,
