@@ -64,5 +64,7 @@
 1. Clone the repo:
    ```sh
    git clone https://github.com/IbrahimHosseini/PocketWords.git
-
-
+   cd PocketWords
+   open PocketWords.xcodeproj
+   ```
+2. Build and run the **PocketWords** scheme in Xcode.
