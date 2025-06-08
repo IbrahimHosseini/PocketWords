@@ -11,14 +11,13 @@ import SwiftUI
 struct CardNavigationView: View {
     let currentIndex: Int
     let totalCount: Int
-    let onPrevious: () -> Void
-    let onNext: () -> Void
+    let onNavigate: (Int) -> Void
 
     var body: some View {
         VStack(spacing: Spacing.small) {
             // Navigation Row
             HStack {
-                Button(action: onPrevious) {
+                Button(action: { onNavigate(currentIndex - 1) }) {
                     Image(systemName: "chevron.left")
                         .padding()
                         .background(Circle().fill(Color.gray.opacity(Opacity.quarter)))
@@ -32,7 +31,7 @@ struct CardNavigationView: View {
 
                 Spacer()
 
-                Button(action: onNext) {
+                Button(action: { onNavigate(currentIndex + 1) }) {
                     Image(systemName: "chevron.right")
                         .padding()
                         .background(Circle().fill(Color.gray.opacity(Opacity.quarter)))
@@ -40,13 +39,16 @@ struct CardNavigationView: View {
                 .disabled(currentIndex == totalCount)
             }
 
-            // Selection Lines/Dots
+            // Selection Lines/Dots (now tappable)
             HStack(spacing: Spacing.small) {
-                ForEach(1...totalCount, id: \.self) { i in
+                ForEach(1...totalCount, id: \.self) { index in
                     Capsule()
-                        .fill(i == currentIndex ? Color.blue : Color.gray.opacity(Opacity.quarter))
-                        .frame(width: i == currentIndex ? Width._20 : Width._10, height: Spacing.small)
+                        .fill(index == currentIndex ? Color.blue : Color.gray.opacity(Opacity.quarter))
+                        .frame(width: index == currentIndex ? Width._20 : Width._10, height: Spacing.small)
                         .animation(.easeInOut(duration: Duration.fast), value: currentIndex)
+                        .onTapGesture {
+                            onNavigate(index)
+                        }
                 }
             }
         }
@@ -56,5 +58,5 @@ struct CardNavigationView: View {
 }
 
 #Preview {
-    CardNavigationView(currentIndex: 1, totalCount: 10, onPrevious: {}, onNext: {})
+    CardNavigationView(currentIndex: 1, totalCount: 10, onNavigate: { _ in })
 }

@@ -102,21 +102,11 @@ struct FlashcardView: View {
                 // Navigation
                 CardNavigationView(
                     currentIndex: cardIndex,
-                    totalCount: cards.count) {
-                        if cardIndex > 1 {
-                            withAnimation {
-                                cardIndex -= 1
-                            }
-                            resetValues()
-                        }
-                    } onNext: {
-                        if cardIndex < cards.count {
-                            withAnimation {
-                                cardIndex += 1
-                            }
-                            resetValues()
-                        }
+                    totalCount: cards.count,
+                    onNavigate: { newIndex in
+                        navigateToCard(at: newIndex)
                     }
+                )
             }
         }
         .sheet(isPresented: $showAddCard) {
@@ -131,5 +121,13 @@ struct FlashcardView: View {
         result = nil
         userAnswer = ""
         showAddCard = false
+    }
+    
+    private func navigateToCard(at newIndex: Int) {
+        guard newIndex > 0 && newIndex <= cards.count else { return }
+        withAnimation {
+            cardIndex = newIndex
+        }
+        resetValues()
     }
 }
