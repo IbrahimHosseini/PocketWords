@@ -24,7 +24,7 @@ struct AnswerInputView: View {
                     // Triggers the same action as the button when the return key is pressed.
                     onCheck()
                 }
-                .submitLabel(.send) // Changes the return key title to "Done"
+                .submitLabel(.send) // Return key displays "Send"
             
             ActionButton(
                 title: buttonTitle,
